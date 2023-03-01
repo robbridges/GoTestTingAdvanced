@@ -18,7 +18,7 @@ func TestCamel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Camel(tt.args.str); got != tt.want {
-				t.Errorf("Camel() = %v, want %v", got, tt.want)
+				t.Fatalf("Camel() = %v, want %v", got, tt.want)
 			}
 		})
 	}
