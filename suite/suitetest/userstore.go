@@ -36,6 +36,8 @@ func UserStore(t *testing.T, us suite.UserStore, beforeEach, afterEach func()) {
 		}
 	})
 
+	//below is how we'd set up a failing test
+
 	// t.Run("ByID", func(t *testing.T) {
 	// 	if beforeEach != nil {
 	// 		beforeEach()

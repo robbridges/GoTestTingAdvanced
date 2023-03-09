@@ -1,4 +1,4 @@
-package stub
+package stub_test
 
 import (
 	"GoTestingAdvanced/suite"
@@ -7,15 +7,8 @@ import (
 	"testing"
 )
 
-package stub_test
-
-import (
-"testing"
-
-"github.com/joncalhoun/twg/suite"
-"github.com/joncalhoun/twg/suite/stub"
-"github.com/joncalhoun/twg/suite/suitetest"
-)
+// create variable of the userstore interface, and assign it to sub.userStore. This will fail if stub.UserStore{}
+//does not implement suite.userStore
 
 var _ suite.UserStore = &stub.UserStore{}
 
