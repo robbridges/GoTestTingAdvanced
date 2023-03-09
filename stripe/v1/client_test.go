@@ -10,9 +10,10 @@ import (
 func TestApp(t *testing.T) {
 	client, mux, teardown := stripe.TestClient(t)
 	defer teardown()
-
+	// we can set what the response is.
 	mux.HandleFunc("/v1/charges", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, `{"id":"ch_1DEjEH2eZvKYlo2CxOmkZL4D","amount":2000,"description":"Charge for demo purposes.","status":"succeeded"}`)
+		fmt.Fprint(w, `{"id":"ch_1DEjEH2eZvKYlo2CxOmkZL4D","amount":2000,
+		"description":"Charge for demo purposes.","status":"succeeded"}`)
 	})
 
 	charge, err := client.Charge(123, "doesnt_matter", "something else")
