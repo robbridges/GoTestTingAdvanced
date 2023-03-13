@@ -109,6 +109,7 @@ func TestApp_v2(t *testing.T) {
 	})
 
 	t.Run("header based auth", func(t *testing.T) {
+		// set what we want the headers to be
 		client := headerClient{
 			headers: map[string]string{"api-key": "fake_api_key"},
 		}
