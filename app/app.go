@@ -24,6 +24,7 @@ func (a *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		a.mux.HandleFunc("/admin", cookieAuthMw(a.admin))
 		a.mux.HandleFunc("/header-admin", headerAuthMw(a.admin))
 	})
+	a.mux.ServeHTTP(w, r)
 }
 
 func (a *Server) home(w http.ResponseWriter, r *http.Request) {
