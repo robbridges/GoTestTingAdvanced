@@ -96,6 +96,26 @@ func TestApp_v2(t *testing.T) {
 	server := httptest.NewServer(&app.Server{})
 	defer server.Close()
 
+	t.Run("custom built request", func(t *testing.T) {
+		t.Log(server.URL)
+		req := signedInRequest(t, http.MethodGet, server.URL+"/admin", nil)
+		var client http.Client
+		resp, err := client.Do(req)
+		if err != nil {
+			t.Fatalf("GET /admin err = %s; want nil", err)
+		}
+		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			t.Errorf("ioutil.ReadAll() err = %s; want nil", err)
+		}
+		got := string(body)
+		want := "<h1>Welcome to the admin page!</h1>"
+		if got != want {
+			t.Errorf("GET /admin = %s; want %s", got, want)
+		}
+	})
+
 	t.Run("Cookie based auth", func(t *testing.T) {
 		baseUrl := server.URL
 		client := signedInClient(t, baseUrl)
@@ -131,8 +151,11 @@ func TestApp_v2(t *testing.T) {
 }
 
 // sign in mock to create a very simple cookie
-func singedInRequest(t *testing.T, method, target string, body io.Reader) *http.Request {
-	req := httptest.NewRequest(method, target, body)
+func signedInRequest(t *testing.T, method, target string, body io.Reader) *http.Request {
+	req, err := http.NewRequest(method, target, body)
+	if err != nil {
+		t.Fatalf("http.NewRequest() err = %s; want nil", err)
+	}
 	req.AddCookie(&http.Cookie{
 		Name:  "session",
 		Value: "fake_session_token",
