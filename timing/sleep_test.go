@@ -19,6 +19,11 @@ func TestPollUntil(t *testing.T) {
 func TestPollFast(t *testing.T) {
 	//over write over the time.Sleep to make this faster
 	timeSleep = func(d time.Duration) {}
+
+	defer func() {
+		timeSleep = time.Sleep
+	}()
+
 	fn := func() bool {
 		return false
 	}
@@ -27,10 +32,6 @@ func TestPollFast(t *testing.T) {
 	if err != ErrExceededMaxTries {
 		t.Errorf("PollUntil() err =%s, want %s", err, ErrExceededMaxTries)
 	}
-}
-
-type TestPoller struct {
-	sleep func(duration time.Duration)
 }
 
 func TestPoller_Until(t *testing.T) {
