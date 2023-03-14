@@ -24,7 +24,7 @@ func TestDoThing(t *testing.T) {
 }
 
 func TestDoThing_inject(t *testing.T) {
-	// change time After to send a time to t he channel
+	// change time After to send a time to the channel
 	timeAfter = func(d time.Duration) <-chan time.Time {
 		ch := make(chan time.Time)
 		go func() { ch <- time.Now() }()
