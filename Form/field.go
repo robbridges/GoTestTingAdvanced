@@ -8,6 +8,9 @@ import (
 func fields(strct interface{}) []field {
 	// god help me for what I'm about to do.
 	rv := reflect.ValueOf(strct)
+	if rv.Kind() != reflect.Struct {
+		panic("form: invalid value; only structs are supported")
+	}
 	t := rv.Type()
 	var ret []field
 	for i := 0; i < t.NumField(); i++ {

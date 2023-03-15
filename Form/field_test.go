@@ -97,3 +97,23 @@ func TestFields(t *testing.T) {
 		})
 	}
 }
+
+func TestFields_InvalidValues(t *testing.T) {
+	tests := []struct {
+		notAstruct interface{}
+	}{
+		{"This is a string"},
+		{123},
+		{nil},
+	}
+	for _, tc := range tests {
+		t.Run(fmt.Sprintf("%T", tc.notAstruct), func(t *testing.T) {
+			defer func() {
+				if err := recover(); err == nil {
+					t.Errorf("Fields() did not panic: with %v", tc.notAstruct)
+				}
+			}()
+			fields(tc.notAstruct)
+		})
+	}
+}
