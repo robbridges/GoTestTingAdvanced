@@ -8,6 +8,10 @@ import (
 func fields(strct interface{}) []field {
 	// god help me for what I'm about to do.
 	rv := reflect.ValueOf(strct)
+	// if it's a pointer, just set it to the element that it is pointing to. Cake and pie.
+	if rv.Kind() == reflect.Ptr {
+		rv = rv.Elem()
+	}
 	if rv.Kind() != reflect.Struct {
 		panic("form: invalid value; only structs are supported")
 	}

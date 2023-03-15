@@ -86,6 +86,31 @@ func TestFields(t *testing.T) {
 				},
 			},
 		},
+		"Pointers to structs should be valid": {
+			strct: &struct {
+				FullName string
+				Age      int
+			}{
+				FullName: "Rob Bridges",
+				Age:      123,
+			},
+			want: []field{
+				{
+					Label:       "FullName",
+					Name:        "FullName",
+					Type:        "text",
+					Placeholder: "FullName",
+					Value:       "Rob Bridges",
+				},
+				{
+					Label:       "Age",
+					Name:        "Age",
+					Type:        "text",
+					Placeholder: "Age",
+					Value:       123,
+				},
+			},
+		},
 	}
 
 	for _, tc := range tests {
