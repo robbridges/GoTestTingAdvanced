@@ -7,11 +7,11 @@ import (
 )
 
 func TestFields(t *testing.T) {
-	tests := []struct {
+	tests := map[string]struct {
 		strct interface{}
 		want  []field
 	}{
-		{
+		"No Values": {
 			strct: struct {
 				FullName string
 			}{},
@@ -25,13 +25,15 @@ func TestFields(t *testing.T) {
 				},
 			},
 		},
-		{
+		"Values Added": {
 			strct: struct {
 				FullName string
 				Email    string
+				Age      int
 			}{
 				FullName: "Rob Bridges",
 				Email:    "test@Admin.com",
+				Age:      123,
 			},
 			want: []field{
 				{
@@ -47,6 +49,40 @@ func TestFields(t *testing.T) {
 					Type:        "text",
 					Placeholder: "Email",
 					Value:       "test@Admin.com",
+				},
+				{
+					Label:       "Age",
+					Name:        "Age",
+					Type:        "text",
+					Placeholder: "Age",
+					Value:       123,
+				},
+			},
+		},
+		"Unexported fields should be skipped": {
+			strct: struct {
+				FullName string
+				email    string
+				Age      int
+			}{
+				FullName: "Rob Bridges",
+				email:    "test@Admin.com",
+				Age:      123,
+			},
+			want: []field{
+				{
+					Label:       "FullName",
+					Name:        "FullName",
+					Type:        "text",
+					Placeholder: "FullName",
+					Value:       "Rob Bridges",
+				},
+				{
+					Label:       "Age",
+					Name:        "Age",
+					Type:        "text",
+					Placeholder: "Age",
+					Value:       123,
 				},
 			},
 		},
