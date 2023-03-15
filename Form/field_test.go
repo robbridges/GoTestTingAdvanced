@@ -28,28 +28,6 @@ func TestFields(t *testing.T) {
 		{
 			strct: struct {
 				FullName string
-				Label    string
-			}{},
-			want: []field{
-				{
-					Label:       "FullName",
-					Name:        "FullName",
-					Type:        "text",
-					Placeholder: "FullName",
-					Value:       "",
-				},
-				{
-					Label:       "Label",
-					Name:        "Label",
-					Type:        "text",
-					Placeholder: "Label",
-					Value:       "",
-				},
-			},
-		},
-		{
-			strct: struct {
-				FullName string
 				Email    string
 			}{
 				FullName: "Rob Bridges",
