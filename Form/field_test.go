@@ -7,6 +7,12 @@ import (
 )
 
 func TestFields(t *testing.T) {
+
+	var nilTestTypePtr *struct {
+		FullName string
+		Age      int
+	}
+
 	tests := map[string]struct {
 		strct interface{}
 		want  []field
@@ -86,6 +92,25 @@ func TestFields(t *testing.T) {
 				},
 			},
 		},
+		"Nil-Pointers to structs should be supported": {
+			strct: nilTestTypePtr,
+			want: []field{
+				{
+					Label:       "FullName",
+					Name:        "FullName",
+					Type:        "text",
+					Placeholder: "FullName",
+					Value:       "",
+				},
+				{
+					Label:       "Age",
+					Name:        "Age",
+					Type:        "text",
+					Placeholder: "Age",
+					Value:       0,
+				},
+			},
+		},
 		"Pointers to structs should be valid": {
 			strct: &struct {
 				FullName string
@@ -111,6 +136,69 @@ func TestFields(t *testing.T) {
 				},
 			},
 		},
+		"Pointers within struct fields should be valid": {
+			strct: struct {
+				FullName *string
+				Age      *int
+			}{},
+			want: []field{
+				{
+					Label:       "FullName",
+					Name:        "FullName",
+					Type:        "text",
+					Placeholder: "FullName",
+					Value:       "",
+				},
+				{
+					Label:       "Age",
+					Name:        "Age",
+					Type:        "text",
+					Placeholder: "Age",
+					Value:       0,
+				},
+			},
+		},
+		"Nested structs should be supported": {
+			strct: struct {
+				FullName string
+				Address  struct {
+					Street string
+					Zip    int
+				}
+			}{
+				FullName: "Rob Bridges",
+				Address: struct {
+					Street string
+					Zip    int
+				}{
+					Street: "123 fake st",
+					Zip:    00001,
+				},
+			},
+			want: []field{
+				{
+					Label:       "FullName",
+					Name:        "FullName",
+					Type:        "text",
+					Placeholder: "FullName",
+					Value:       "",
+				},
+				{
+					Label:       "Street",
+					Name:        "Address.Street",
+					Type:        "text",
+					Placeholder: "Street",
+					Value:       "123 fake St",
+				},
+				{
+					Label:       "Zip",
+					Name:        "Address.Zip",
+					Type:        "text",
+					Placeholder: "Zip",
+					Value:       00001,
+				},
+			},
+		},
 	}
 
 	for _, tc := range tests {
@@ -131,6 +219,7 @@ func TestFields_InvalidValues(t *testing.T) {
 		{123},
 		{nil},
 	}
+	// test for a panic, first by defering a function to catch the panic then call the function that we expect to panic
 	for _, tc := range tests {
 		t.Run(fmt.Sprintf("%T", tc.notAstruct), func(t *testing.T) {
 			defer func() {
