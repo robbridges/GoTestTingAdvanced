@@ -160,42 +160,134 @@ func TestFields(t *testing.T) {
 		},
 		"Nested structs should be supported": {
 			strct: struct {
-				FullName string
-				Address  struct {
+				Name    string
+				Address struct {
 					Street string
 					Zip    int
 				}
 			}{
-				FullName: "Rob Bridges",
+				Name: "Jon Calhoun",
 				Address: struct {
 					Street string
 					Zip    int
 				}{
-					Street: "123 fake st",
-					Zip:    00001,
+					Street: "123 Fake St",
+					Zip:    90210,
 				},
 			},
 			want: []field{
 				{
-					Label:       "FullName",
-					Name:        "FullName",
+					Label:       "Name",
+					Name:        "Name",
 					Type:        "text",
-					Placeholder: "FullName",
-					Value:       "",
+					Placeholder: "Name",
+					Value:       "Jon Calhoun",
 				},
 				{
 					Label:       "Street",
 					Name:        "Address.Street",
 					Type:        "text",
 					Placeholder: "Street",
-					Value:       "123 fake St",
+					Value:       "123 Fake St",
 				},
 				{
 					Label:       "Zip",
 					Name:        "Address.Zip",
 					Type:        "text",
 					Placeholder: "Zip",
-					Value:       00001,
+					Value:       90210,
+				},
+			},
+		},
+		"Doubly nested structs should be supported": {
+			strct: struct {
+				A struct {
+					B struct {
+						C1 string
+						C2 int
+					}
+				}
+			}{
+				A: struct {
+					B struct {
+						C1 string
+						C2 int
+					}
+				}{
+					B: struct {
+						C1 string
+						C2 int
+					}{
+						C1: "C1-value",
+						C2: 123,
+					},
+				},
+			},
+			want: []field{
+				{
+					Label:       "C1",
+					Name:        "A.B.C1",
+					Type:        "text",
+					Placeholder: "C1",
+					Value:       "C1-value",
+				},
+				{
+					Label:       "C2",
+					Name:        "A.B.C2",
+					Type:        "text",
+					Placeholder: "C2",
+					Value:       123,
+				},
+			},
+		},
+		"Nested pointer structs should be supported": {
+			strct: struct {
+				Name    string
+				Address *struct {
+					Street string
+					Zip    int
+				}
+				ContactCard *struct {
+					Phone string
+				}
+			}{
+				Name: "Jon Calhoun",
+				Address: &struct {
+					Street string
+					Zip    int
+				}{
+					Street: "123 Fake St",
+					Zip:    90210,
+				},
+			},
+			want: []field{
+				{
+					Label:       "Name",
+					Name:        "Name",
+					Type:        "text",
+					Placeholder: "Name",
+					Value:       "Jon Calhoun",
+				},
+				{
+					Label:       "Street",
+					Name:        "Address.Street",
+					Type:        "text",
+					Placeholder: "Street",
+					Value:       "123 Fake St",
+				},
+				{
+					Label:       "Zip",
+					Name:        "Address.Zip",
+					Type:        "text",
+					Placeholder: "Zip",
+					Value:       90210,
+				},
+				{
+					Label:       "Phone",
+					Name:        "ContactCard.Phone",
+					Type:        "text",
+					Placeholder: "Phone",
+					Value:       "",
 				},
 			},
 		},

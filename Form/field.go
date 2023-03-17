@@ -1,8 +1,8 @@
 package Form
 
 import (
-	"fmt"
 	"reflect"
+	"strings"
 )
 
 func valueOf(v interface{}) reflect.Value {
@@ -27,8 +27,7 @@ func valueOf(v interface{}) reflect.Value {
 	return rv
 }
 
-func fields(strct interface{}) []field {
-	// god help me for what I'm about to do.
+func fields(strct interface{}, parentNames ...string) []field {
 	rv := valueOf(strct)
 	if rv.Kind() != reflect.Struct {
 		panic("form: invalid value; only structs are supported")
@@ -42,23 +41,23 @@ func fields(strct interface{}) []field {
 			continue
 		}
 		if rvf.Kind() == reflect.Struct {
-			nestedFields := fields(rvf.Interface())
-			for i, nf := range nestedFields {
-				nestedFields[i].Name = tf.Name + "." + nf.Name
-			}
+			nestedParentNames := append(parentNames, tf.Name)
+			nestedFields := fields(rvf.Interface(), nestedParentNames...)
 			ret = append(ret, nestedFields...)
+			continue
 		}
+		names := append(parentNames, tf.Name)
+		name := strings.Join(names, ".")
 		f := field{
 			Label:       tf.Name,
-			Name:        tf.Name,
+			Name:        name,
 			Type:        "text",
 			Placeholder: tf.Name,
 			Value:       rvf.Interface(),
 		}
+		f.apply(parseTags(tf))
 		ret = append(ret, f)
 	}
-	fmt.Printf("%v\n", t)
-
 	return ret
 }
 
@@ -68,4 +67,39 @@ type field struct {
 	Type        string
 	Placeholder string
 	Value       interface{}
+}
+
+func parseTags(sf reflect.StructField) map[string]string {
+	// label=Full Name;name=full_name
+	rawTag := sf.Tag.Get("form")
+	if len(rawTag) == 0 {
+		return nil
+	}
+	ret := make(map[string]string)
+	// tags = [label=Full Name, name=full_name]
+	tags := strings.Split(rawTag, ";")
+	for _, tag := range tags {
+		kv := strings.Split(tag, "=")
+		if len(kv) != 2 {
+			panic("form: invalid struct tag")
+		}
+		k, v := kv[0], kv[1]
+		ret[k] = v
+	}
+	return ret
+}
+
+func (f *field) apply(tags map[string]string) {
+	if v, ok := tags["name"]; ok {
+		f.Name = v
+	}
+	if v, ok := tags["label"]; ok {
+		f.Label = v
+	}
+	if v, ok := tags["placeholder"]; ok {
+		f.Placeholder = v
+	}
+	if v, ok := tags["type"]; ok {
+		f.Type = v
+	}
 }
