@@ -1,6 +1,9 @@
 package Form
 
-import "html/template"
+import (
+	"html/template"
+	"strings"
+)
 
 // HTML is used to generate HTML forms/inputs from Go structs. Given a
 // template that looks something like this:
@@ -26,5 +29,14 @@ import "html/template"
 // in the html_test.go source file.
 
 func HTML(t *template.Template, strct interface{}) (template.HTML, error) {
-	return "", nil
+	var inputs []string
+	for _, field := range fields(strct) {
+		var sb strings.Builder
+		err := t.Execute(&sb, field)
+		if err != nil {
+			return "", err
+		}
+		inputs = append(inputs, sb.String())
+	}
+	return template.HTML(strings.Join(inputs, "")), nil
 }

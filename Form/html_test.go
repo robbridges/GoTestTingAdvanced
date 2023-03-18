@@ -9,8 +9,7 @@ import (
 var (
 	// this template calls template.Must if it is not created correctly it will panic. We then call in parse to create
 	//in a string to parse the template
-	tplTypeNameValue = template.Must(template.New("").Parse(`<input type="{{.Type}}" name="{{.Name}}"
-	{{with .Value}} value="{{.}}"{{end}}>`))
+	tplTypeNameValue = template.Must(template.New("").Parse(`<input type="{{.Type}}" name="{{.Name}}"{{with .Value}} value="{{.}}"{{end}}>`))
 )
 
 func TestHTML(t *testing.T) {
@@ -26,9 +25,11 @@ func TestHTML(t *testing.T) {
 				Name  string
 				Email string
 			}{
-				Name:  "Micheal Scott",
-				Email: "micheal@dundermifflin.com",
+				Name:  "Michael Scott",
+				Email: "michael@dundermifflin.com",
 			},
+			want: `<input type="text" name="Name" value="Michael Scott">` +
+				`<input type="text" name="Email" value="michael@dundermifflin.com">`,
 		},
 	}
 
