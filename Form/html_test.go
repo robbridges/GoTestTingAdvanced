@@ -12,6 +12,10 @@ var (
 	tplTypeNameValue = template.Must(template.New("").Parse(`<input type="{{.Type}}" name="{{.Name}}"{{with .Value}} value="{{.}}"{{end}}>`))
 )
 
+func TestParseTags(t *testing.T) {
+
+}
+
 func TestHTML(t *testing.T) {
 	tests := map[string]struct {
 		tpl     *template.Template
