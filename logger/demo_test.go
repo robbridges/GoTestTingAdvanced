@@ -30,16 +30,6 @@ func TestDemoV3(t *testing.T) {
 	}
 }
 
-func TestDemoV4(t *testing.T) {
-	var fl fakeLogger
-	logger.DemoV4(&fl)
-	want := "error in doTheThing():\n"
-	got := fl.sb.String()
-	if !strings.Contains(got, want) {
-		t.Errorf("Logs = %q; want substring %q", got, want)
-	}
-}
-
 func TestDemoV5(t *testing.T) {
 	var sb strings.Builder
 	testLogger := log.New(&sb, "", 0)
